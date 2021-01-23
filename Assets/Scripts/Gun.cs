@@ -15,7 +15,7 @@ public class Gun : MonoBehaviour {
     Transform shotSpawn;
     Transform shellSpawn;
 
-    string gunName = "Pistol";
+    string gunName = "Sniper";
 
     private void Awake() {
 
@@ -36,10 +36,7 @@ public class Gun : MonoBehaviour {
 
     void Update() {
         
-
         if(Input.GetKeyDown(KeyCode.Mouse0)) {
-
-            Debug.Break();
 
             animator.Play("Shoot", -1, 0);
 
@@ -49,12 +46,29 @@ public class Gun : MonoBehaviour {
             shootEffects.Shell(shellSpawn.position, shellSpawn.rotation);
 
             // implementação do tiro vem aqui....
-            ShootRaycast();
-            //ShootBullet();
+            // ShootRaycast();
+            ShootBullet();
 
         }
 
     }
+
+    void ShootBullet() {
+
+        Transform bulletObj = Instantiate(bulletPrefab, shotSpawn.position, shotSpawn.rotation);
+        Destroy(bulletObj.gameObject, 10f);
+
+        RaycastHit hitInfo;
+        if (Physics.Raycast(fpsCam.transform.position, fpsCam.GetForwardDirection(), out hitInfo, Mathf.Infinity, LayerMask.GetMask("hittable"))) {
+
+            bulletObj.GetComponent<Bullet>().SetDirection((hitInfo.point - shotSpawn.position).normalized);
+
+        } else {
+            bulletObj.GetComponent<Bullet>().SetDirection(fpsCam.GetForwardDirection());
+        }
+
+    }
+
 
     void ShootRaycast() {
 
@@ -67,24 +81,10 @@ public class Gun : MonoBehaviour {
                 hitted.Hit(fpsCam.GetForwardDirection());
 
             }
-
         }
-
     }
 
-    public void ShootBullet() {
 
-        Transform obj = Instantiate(bulletPrefab, shotSpawn.position, shotSpawn.rotation);
-        Destroy(obj.gameObject, 10);
-
-        RaycastHit hit;
-        if (Physics.Raycast(fpsCam.transform.position, fpsCam.GetForwardDirection(), out hit, Mathf.Infinity, LayerMask.GetMask("hittable"))) {
-            obj.GetComponent<Bullet>().SetDirection((hit.point - shotSpawn.position).normalized);
-        } else {
-            obj.GetComponent<Bullet>().SetDirection(fpsCam.GetForwardDirection());
-        }
-
-    }
-
+   
 
 }

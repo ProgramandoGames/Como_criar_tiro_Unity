@@ -1,15 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Bullet : MonoBehaviour {
 
     Vector3 velocity;
 
-    float speed   = 15f;
-    float gravity = 1.5f;
+    float speed = 20;
 
-    new BoxCollider collider;
+    float gravity = 1.5f;
+    float wind    = 1.5f;
+
+    BoxCollider collider;
 
     void Start() {
 
@@ -19,30 +19,32 @@ public class Bullet : MonoBehaviour {
 
     void Update() {
 
-        velocity += Vector3.down * gravity * Time.deltaTime;
+        velocity += gravity * Vector3.down * Time.deltaTime;
+        velocity += wind * transform.right * Time.deltaTime;
 
         transform.position += velocity * Time.deltaTime;
 
-        Collider[] collidedObj = Physics.OverlapBox(transform.position, collider.size / 2, transform.rotation, LayerMask.GetMask("hittable"));
+        Collider[] colliders = Physics.OverlapBox(transform.position, collider.size / 2, transform.rotation, LayerMask.GetMask("hittable"));
 
-        if(collidedObj.Length > 0) {
+        if(colliders.Length > 0) {
 
-            IShotHit hittedObj = collidedObj[0].GetComponent<IShotHit>();
-
-            if(hittedObj != null) {
-                hittedObj.Hit(velocity.normalized);
+            IShotHit hitted = colliders[0].GetComponent<IShotHit>();
+            if(hitted != null) {
+                hitted.Hit(velocity.normalized);
             }
 
             Destroy(gameObject);
 
         }
 
+
     }
 
     public void SetDirection(Vector3 direction) {
+
         velocity = direction * speed;
+
     }
 
-
-
 }
+

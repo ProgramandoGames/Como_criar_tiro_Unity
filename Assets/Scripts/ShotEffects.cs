@@ -18,7 +18,7 @@ public class ShotEffects : MonoBehaviour {
                                            obj.localEulerAngles.y-110,
                                            obj.localEulerAngles.z);
 
-        obj.localScale = Vector3.one * 1;
+        //obj.localScale = Vector3.one * 1.2f;
 
         Destroy(obj.gameObject, 0.1f);
     }
